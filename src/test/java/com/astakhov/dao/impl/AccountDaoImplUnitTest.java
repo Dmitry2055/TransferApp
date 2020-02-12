@@ -2,7 +2,6 @@ package com.astakhov.dao.impl;
 
 import com.astakhov.dao.AccountDao;
 import com.astakhov.entity.Account;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -36,7 +35,7 @@ public class AccountDaoImplUnitTest {
         Account dummyAccount = new Account();
         dummyAccount.setBalance(BigDecimal.valueOf(123.45));
         dummyAccount.setId("existingAccountId");
-        accountDao.save(dummyAccount);
+        accountDao.create(dummyAccount);
         assertEquals(dummyAccount, storage.get(dummyAccount.getId()));
     }
 }

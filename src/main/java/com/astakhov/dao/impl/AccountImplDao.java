@@ -23,12 +23,17 @@ public class AccountImplDao implements AccountDao {
     }
 
     @Override
-    public void save(final Account toAccount) {
+    public void create(final Account toAccount) {
         storage.put(toAccount.getId(), toAccount);
     }
 
     @Override
     public List<Account> getAccounts() {
         return new ArrayList<>(storage.values());
+    }
+
+    @Override
+    public void update(Account account) {
+
     }
 }

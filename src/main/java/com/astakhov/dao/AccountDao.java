@@ -7,7 +7,9 @@ import java.util.List;
 public interface AccountDao {
     Account getAccountById(String accountId);
 
-    void save(Account toAccount);
+    void create(Account toAccount);
 
     List<Account> getAccounts();
+
+    void update(Account account);
 }

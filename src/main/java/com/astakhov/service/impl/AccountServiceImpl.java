@@ -1,9 +1,9 @@
 package com.astakhov.service.impl;
 
-import com.astakhov.exception.ServiceException;
 import com.astakhov.dao.AccountDao;
-import com.astakhov.service.AccountService;
 import com.astakhov.entity.Account;
+import com.astakhov.exception.ServiceException;
+import com.astakhov.service.AccountService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,10 +18,9 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountDao accountDao;
 
-
     @Override
     public void updateAccount(final Account account) {
-
+        accountDao.update(account);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = new Account();
         account.setBalance(balance);
         account.setId(UUID.randomUUID().toString());
-        accountDao.save(account);
+        accountDao.create(account);
         return account;
     }
 
