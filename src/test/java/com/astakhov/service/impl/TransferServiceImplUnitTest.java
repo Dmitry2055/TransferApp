@@ -1,8 +1,8 @@
 package com.astakhov.service.impl;
 
-import com.astakhov.exception.ServiceException;
 import com.astakhov.entity.Account;
 import com.astakhov.entity.Transfer;
+import com.astakhov.exception.ServiceException;
 import com.astakhov.service.AccountService;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,27 +24,26 @@ public class TransferServiceImplUnitTest {
     private AccountService accountService;
 
     @InjectMocks
-    private TransferServiceImpl service;
+    private TransferServiceImpl transferService;
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void shouldThrowWhenTransferringNegativeAmount() {
-        thrown.expect(ServiceException.class);
-        thrown.expectMessage("Cannot transfer negative amount");
         Transfer negativeAmountTransfer = new Transfer();
         negativeAmountTransfer.setAmount(BigDecimal.valueOf(-123.45));
         negativeAmountTransfer.setSourceAccountId("source");
         negativeAmountTransfer.setDestinationAccountId("destination");
-        service.performTransfer(negativeAmountTransfer);
+
+        thrown.expect(ServiceException.class);
+        thrown.expectMessage("Cannot complete transfer: the amount cannot be negative");
+
+        transferService.performTransfer(negativeAmountTransfer);
     }
 
     @Test
     public void shouldThrowWhenInsufficientFundsOnDestinationAccount() {
-        thrown.expect(ServiceException.class);
-        thrown.expectMessage("Insufficient balance");
-
         Account sourceAccount = new Account();
         sourceAccount.setId("source");
         sourceAccount.setBalance(BigDecimal.valueOf(0));
@@ -53,13 +52,17 @@ public class TransferServiceImplUnitTest {
         destinationAccount.setId("destination");
         destinationAccount.setBalance(BigDecimal.valueOf(123.45));
 
-        when(accountService.getAccount("source")).thenReturn(Optional.of(sourceAccount));
-        when(accountService.getAccount("destination")).thenReturn(Optional.of(destinationAccount));
         Transfer transfer = new Transfer();
         transfer.setAmount(BigDecimal.valueOf(1.0));
         transfer.setSourceAccountId("source");
         transfer.setDestinationAccountId("destination");
-        service.performTransfer(transfer);
+
+        thrown.expect(ServiceException.class);
+        thrown.expectMessage("Cannot complete transfer: insufficient funds on 'source'");
+        when(accountService.getAccount("source")).thenReturn(Optional.of(sourceAccount));
+        when(accountService.getAccount("destination")).thenReturn(Optional.of(destinationAccount));
+
+        transferService.performTransfer(transfer);
     }
 
     @Test
@@ -72,16 +75,50 @@ public class TransferServiceImplUnitTest {
         destinationAccount.setId("destination");
         destinationAccount.setBalance(BigDecimal.valueOf(10));
 
-        when(accountService.getAccount("source")).thenReturn(Optional.of(sourceAccount));
-        when(accountService.getAccount("destination")).thenReturn(Optional.of(destinationAccount));
         Transfer transfer = new Transfer();
         transfer.setAmount(BigDecimal.valueOf(1.0));
         transfer.setSourceAccountId("source");
         transfer.setDestinationAccountId("destination");
-        service.performTransfer(transfer);
+
+        when(accountService.getAccount("source")).thenReturn(Optional.of(sourceAccount));
+        when(accountService.getAccount("destination")).thenReturn(Optional.of(destinationAccount));
+
+        transferService.performTransfer(transfer);
 
         verify(accountService, times(1)).updateAccount(sourceAccount);
         verify(accountService, times(1)).updateAccount(destinationAccount);
+    }
+
+    @Test
+    public void shouldThrowWhenSourceAccountNotExist() {
+        Transfer transfer = new Transfer();
+        transfer.setAmount(BigDecimal.valueOf(1.0));
+        transfer.setSourceAccountId("nonexistent-source");
+        transfer.setDestinationAccountId("destination");
+
+        thrown.expect(ServiceException.class);
+        thrown.expectMessage("Cannot complete transfer: account 'nonexistent-source' does not exist");
+        when(accountService.getAccount("nonexistent-source")).thenReturn(Optional.empty());
+
+        transferService.performTransfer(transfer);
+    }
+
+    @Test
+    public void shouldThrowWhenDestinationAccountNotExist() {
+        Account sourceAccount = new Account();
+        sourceAccount.setId("source");
+        sourceAccount.setBalance(BigDecimal.valueOf(10));
+
+        Transfer transfer = new Transfer();
+        transfer.setAmount(BigDecimal.valueOf(1.0));
+        transfer.setSourceAccountId("source");
+        transfer.setDestinationAccountId("nonexistent-destination");
+
+        thrown.expect(ServiceException.class);
+        thrown.expectMessage("Cannot complete transfer: account 'nonexistent-destination' does not exist");
+        when(accountService.getAccount("source")).thenReturn(Optional.of(sourceAccount));
+
+        transferService.performTransfer(transfer);
     }
 
 }

@@ -2,13 +2,13 @@ package com.astakhov.service;
 
 import com.astakhov.entity.Transfer;
 
+/**
+ * Service for transfer-related functionality.
+ */
 public interface TransferService {
 
     /**
-     * Transfer specified amount from one account to another.
-     * 1. Accounts must exist
-     * 2. Amount transferred must not exceed available amount
-     * 3. Amount should not be negative
+     * Perform a transfer described by passed {@link Transfer} object.
      *
      * @param transfer a transfer to make
      */
