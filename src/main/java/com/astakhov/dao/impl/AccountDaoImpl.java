@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class AccountImplDao implements AccountDao {
+public class AccountDaoImpl implements AccountDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountImplDao.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AccountDaoImpl.class);
 
     private final Map<String, Account> storage;
 
-    public AccountImplDao(Map<String, Account> storage) {
+    public AccountDaoImpl(final Map<String, Account> storage) {
         this.storage = storage;
     }
 
@@ -23,8 +23,8 @@ public class AccountImplDao implements AccountDao {
     }
 
     @Override
-    public void create(final Account toAccount) {
-        storage.put(toAccount.getId(), toAccount);
+    public void create(final Account account) {
+        storage.put(account.getId(), account);
     }
 
     @Override
@@ -33,7 +33,9 @@ public class AccountImplDao implements AccountDao {
     }
 
     @Override
-    public void update(Account account) {
-
+    public void update(final Account account) {
+        if (storage.containsKey(account.getId())) {
+            storage.put(account.getId(), account);
+        }
     }
 }
