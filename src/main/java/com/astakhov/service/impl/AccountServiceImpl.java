@@ -31,7 +31,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAccount(final BigDecimal balance) {
         LOG.info("Creating a new account");
-        if (BigDecimal.ZERO.compareTo(balance) >= 0) {
+        if (BigDecimal.ZERO.compareTo(balance) > 0) {
             throw new ServiceException("Cannot create an account with negative balance");
         }
         Account account = new Account();
