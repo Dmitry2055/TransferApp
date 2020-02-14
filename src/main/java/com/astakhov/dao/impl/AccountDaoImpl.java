@@ -2,6 +2,7 @@ package com.astakhov.dao.impl;
 
 import com.astakhov.dao.AccountDao;
 import com.astakhov.entity.Account;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public List<Account> getAccounts() {
-        return new ArrayList<>(storage.values());
+        return Lists.newArrayList(storage.values());
     }
 
     @Override

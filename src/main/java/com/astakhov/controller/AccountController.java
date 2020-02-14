@@ -12,8 +12,7 @@ import spark.Response;
 import java.util.List;
 import java.util.Optional;
 
-import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
-import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.*;
 
 /**
  * Controller for handling accounts.
@@ -28,7 +27,7 @@ public class AccountController {
     public Object createAccount(final Request request, final Response response) {
         CreateAccountRequest createAccountRequest = ConverterUtils.toObject(request.body(), CreateAccountRequest.class);
         Account createdAccount = accountService.createAccount(createAccountRequest.getBalance());
-        response.status(HTTP_OK);
+        response.status(HTTP_CREATED);
         return ConverterUtils.toJson(createdAccount);
     }
 

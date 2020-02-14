@@ -12,11 +12,11 @@ import com.astakhov.service.impl.TransferServiceImpl;
 import com.astakhov.util.HandlerUtils;
 import spark.Spark;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Application {
     public static void main(String[] args) {
-        AccountDao accountDao = new AccountDaoImpl(new HashMap<>());
+        AccountDao accountDao = new AccountDaoImpl(new ConcurrentHashMap<>());
         AccountService accountService = new AccountServiceImpl(accountDao);
         TransferService transferService = new TransferServiceImpl(accountService);
         TransferController transferController = new TransferController(transferService);

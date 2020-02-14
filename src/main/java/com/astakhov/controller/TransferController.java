@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
-import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_CREATED;
 
 /**
  * Controller for handling transfers.
@@ -25,7 +25,7 @@ public class TransferController {
     public Object makeTransfer(final Request request, final Response response) {
         Transfer transfer = ConverterUtils.toObject(request.body(), Transfer.class);
         transferService.performTransfer(transfer);
-        response.status(HTTP_OK);
+        response.status(HTTP_CREATED);
         return "";
     }
 }
