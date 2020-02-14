@@ -1,0 +1,132 @@
+openapi: 3.0.0
+info:
+  title: Money transfer app
+  version: "1.0"
+paths:
+  /transfers:
+    post:
+      summary: Create a transfer
+      operationId: createTransfer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transfer"
+      responses:
+        "201":
+          description: transfer created
+          content:
+            application/json:
+              example: ""
+        "400":
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /accounts:
+    get:
+      summary: List accounts
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountList"
+    post:
+      summary: Create an account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccountRequest"
+        required: true
+      responses:
+        "201":
+          description: successful response
+        "400":
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /accounts/{id}:
+    get:
+      summary: Get an account
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "404":
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+components:
+  schemas:
+    Transfer:
+      type: object
+      title: Transfer
+      required:
+        - sourceAccount
+        - destinationAccount
+        - amount
+      properties:
+        sourceAccount:
+          type: string
+        destinationAccount:
+          type: string
+        amount:
+          type: number
+
+    CreateAccountRequest:
+      type: object
+      title: Create account request
+      required:
+        - balance
+      properties:
+        balance:
+          type: number
+          minimum: 0
+
+    Account:
+      type: object
+      title: Account
+      required:
+        - id
+        - balance
+      properties:
+        id:
+          type: string
+        balance:
+          type: number
+
+    AccountList:
+      type: object
+      title: Account
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
