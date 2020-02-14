@@ -40,7 +40,7 @@ public class AccountServiceImplUnitTest {
     }
 
     @Test
-    public void shouldThrowWhenCretingAccountWithNegativeBalance() {
+    public void shouldThrowWhenCreatingAccountWithNegativeBalance() {
         thrown.expect(ServiceException.class);
         thrown.expectMessage("Cannot create an account with negative balance");
         BigDecimal balance = BigDecimal.valueOf(-123.45);

@@ -37,7 +37,20 @@ public class TransferServiceImplUnitTest {
         negativeAmountTransfer.setDestinationAccountId("destination");
 
         thrown.expect(ServiceException.class);
-        thrown.expectMessage("Cannot complete transfer: the amount cannot be negative");
+        thrown.expectMessage("Cannot complete transfer: the amount must be positive");
+
+        transferService.performTransfer(negativeAmountTransfer);
+    }
+
+    @Test
+    public void shouldThrowWhenTransferringZeroAmount() {
+        Transfer negativeAmountTransfer = new Transfer();
+        negativeAmountTransfer.setAmount(BigDecimal.valueOf(0));
+        negativeAmountTransfer.setSourceAccountId("source");
+        negativeAmountTransfer.setDestinationAccountId("destination");
+
+        thrown.expect(ServiceException.class);
+        thrown.expectMessage("Cannot complete transfer: the amount must be positive");
 
         transferService.performTransfer(negativeAmountTransfer);
     }

@@ -1,8 +1,8 @@
 package com.astakhov.service.impl;
 
-import com.astakhov.exception.ServiceException;
 import com.astakhov.entity.Account;
 import com.astakhov.entity.Transfer;
+import com.astakhov.exception.ServiceException;
 import com.astakhov.service.AccountService;
 import com.astakhov.service.TransferService;
 import org.slf4j.Logger;
@@ -32,17 +32,18 @@ public class TransferServiceImpl implements TransferService {
         final Account toAccount = accountService.getAccount(transfer.getDestinationAccountId())
                 .orElseThrow(() -> this.handleAbsentAccount(transfer.getDestinationAccountId()));
 
-        verifySufficientFunds(fromAccount, transfer.getAmount());
 
         synchronized (this) {
             /* start transaction */
+            verifySufficientFunds(fromAccount, transfer.getAmount());
             toAccount.setBalance(toAccount.getBalance().add(transfer.getAmount()));
             fromAccount.setBalance(fromAccount.getBalance().subtract(transfer.getAmount()));
             accountService.updateAccount(toAccount);
             accountService.updateAccount(fromAccount);
             /* end transaction */
         }
-        LOG.info("Transfer {} from '{}' to '{}' successful");
+        LOG.info("Transfer {} from '{}' to '{}' successful",
+                transfer.getAmount(), transfer.getSourceAccountId(), transfer.getDestinationAccountId());
     }
 
     private void verifySufficientFunds(final Account account, final BigDecimal amount) {
@@ -52,8 +53,8 @@ public class TransferServiceImpl implements TransferService {
     }
 
     private void validateTransfer(final Transfer transfer) {
-        if (transfer.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-            throw new ServiceException("Cannot complete transfer: the amount cannot be negative");
+        if (BigDecimal.ZERO.compareTo(transfer.getAmount()) >= 0) {
+            throw new ServiceException("Cannot complete transfer: the amount must be positive");
         }
     }
 
