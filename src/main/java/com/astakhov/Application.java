@@ -14,7 +14,7 @@ import spark.Spark;
 
 import java.util.HashMap;
 
-public class MoneyTransferService {
+public class Application {
     public static void main(String[] args) {
         AccountDao accountDao = new AccountDaoImpl(new HashMap<>());
         AccountService accountService = new AccountServiceImpl(accountDao);
