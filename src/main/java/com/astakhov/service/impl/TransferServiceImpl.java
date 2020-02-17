@@ -27,14 +27,12 @@ public class TransferServiceImpl implements TransferService {
 
         validateTransfer(transfer);
 
-        final Account fromAccount = accountService.getAccount(transfer.getSourceAccountId())
-                .orElseThrow(() -> this.handleAbsentAccount(transfer.getSourceAccountId()));
-        final Account toAccount = accountService.getAccount(transfer.getDestinationAccountId())
-                .orElseThrow(() -> this.handleAbsentAccount(transfer.getDestinationAccountId()));
-
-
         synchronized (this) {
             /* start transaction */
+            final Account fromAccount = accountService.getAccount(transfer.getSourceAccountId())
+                    .orElseThrow(() -> this.handleAbsentAccount(transfer.getSourceAccountId()));
+            final Account toAccount = accountService.getAccount(transfer.getDestinationAccountId())
+                    .orElseThrow(() -> this.handleAbsentAccount(transfer.getDestinationAccountId()));
             verifySufficientFunds(fromAccount, transfer.getAmount());
             toAccount.setBalance(toAccount.getBalance().add(transfer.getAmount()));
             fromAccount.setBalance(fromAccount.getBalance().subtract(transfer.getAmount()));
